@@ -8,6 +8,9 @@ export const feedBackAtom = atom<string>('');
 // 任务状态
 export const taskStatusAtom = atom<boolean>(false);
 
+// 待编辑文件
+export const editFileAtom = atom<[]>([]);
+
 
 // 用户信息
 export const user = {

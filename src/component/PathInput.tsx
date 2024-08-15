@@ -5,6 +5,8 @@ import { inputValueAtom } from '../store'
 
 export const PathInput = () => {
   const [path, setPath] = useAtom(inputValueAtom)
+  console.log(path);
+  
 
 
   return (
