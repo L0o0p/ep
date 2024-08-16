@@ -60,7 +60,16 @@ export const SubmitButton = () => {
         // 保存文件信息
         // setEditFile(responseJson)
         const feedback = await sendMessage(responseJson['id'])
-        item.tags.push(feedback)
+        console.log('feedback:', feedback, 'type', typeof feedback);
+        // const Regex = /，|,/
+        const Regex = /[，,.。]+/; // 定义了中文逗号、英文逗号、中文句号、英文句号作为分隔符
+        const useToTags = feedback.split(Regex)
+        console.log('useToTags:', useToTags, 'type', typeof useToTags);
+        for (const tag of useToTags) {
+          item.tags.push(tag)
+          console.log(item);
+        }
+
         await item.save();
         setFeedBack(feedback)
         // await tagItems(editFile)
@@ -157,16 +166,6 @@ async function sendMessage(editFile: string) {
   }
 }
 
-// // 方法：将返回信息tag给图片
-// const tagItems = async (editFile: string[]) => {
-//   if (editFile.length > 0) {
-//     let selectedItem = editFile[0];
-//     // 修改标签
-//     selectedItem.tags = ['tag1', 'tag2'];
 
-//     // 保存修改
-//     await selectedItem.save();
-//   }
-// }
 
 
