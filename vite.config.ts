@@ -13,6 +13,7 @@ import { resolve } from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './', // 使用相对路径
   build: {
     outDir: 'build'
   },
