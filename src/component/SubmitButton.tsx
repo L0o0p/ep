@@ -8,7 +8,7 @@ import {
 import axios, { AxiosError } from "axios"
 import { useCallback } from "react"
 // import * as fs from 'fs'
-const url = 'https://dify.cyte.site:2097/v1/files/upload';
+const url = user.BASE_URL + '/files/upload';
 
 export const SubmitButton = () => {
   const [path] = useAtom<string>(inputValueAtom)
