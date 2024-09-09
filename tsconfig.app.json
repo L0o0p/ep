@@ -1,7 +1,30 @@
 {
   "compilerOptions": {
+    "baseUrl": ".", // 确保基准路径是项目的根目录
+    "paths": {
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@store": [
+        "src/store"
+      ],
+      "@router":  [
+         "src/router"
+       ],
+        "@router/*":  [
+         "src/router/*"
+       ]
+    },
     "target": "ES2020",
     "useDefineForClassFields": true,
+     "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "lib": [
       "ES2020",
       "DOM",

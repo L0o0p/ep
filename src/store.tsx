@@ -1,4 +1,42 @@
-import { atom } from "jotai";
+import { atom, useAtom } from "jotai";
+
+// 用户信息
+export interface initUserInfo {
+    userName: string,
+    password: string,
+}
+export const initUserInfo = {
+    userName: '',
+    password: '',
+}
+export const userInfoAtom = atom<initUserInfo>(initUserInfo);
+export const useUserInfo = () => {
+    const [userInfo, setUserInfo] = useAtom(userInfoAtom)
+    // 设置用户名
+    const setUserName = (userName: string) => {
+        setUserInfo({
+            ...userInfo,
+            userName
+        })
+    }
+    // 设置密码
+    const setPassword = (password: string) => {
+        setUserInfo({
+            ...userInfo,
+            password
+        })
+    }
+    // 判断用户名和密码是否为空
+    const isEmpty: boolean = (userInfo.userName === '' || userInfo.password === '')
+    // 返回用户信息
+    return {
+        isEmpty,
+        userInfo,
+        setUserInfo,
+        setUserName,
+        setPassword
+    }
+}
 
 // 用户输入-地址
 export const inputValueAtom = atom<string>('');

@@ -8,7 +8,7 @@ import {
 import axios, { AxiosError } from "axios"
 import { useCallback } from "react"
 // import * as fs from 'fs'
-const url = 'https://dify.cyte.site:2097/v1/files/upload';
+const url = 'https://dify.cyte.site:2097/v1/files/upload';// 替换成本地服务器url和api
 
 export const SubmitButton = () => {
   const [path] = useAtom<string>(inputValueAtom)
@@ -43,7 +43,7 @@ export const SubmitButton = () => {
       try {
         const config = {
           headers: {
-            'Authorization': `Bearer ${user.Authorization}`, // 替换 {api_key} 为你的实际 API 密钥
+            'Authorization': `Bearer ${user.Authorization}`, // 替换为服务器url，替换 {api_key} 为你的实际 API 密钥
             'Content-Type': 'multipart/form-data'
           }
         };
@@ -59,7 +59,7 @@ export const SubmitButton = () => {
           });
         // 保存文件信息
         // setEditFile(responseJson)
-        const feedback = await sendMessage(responseJson['id'])
+        const feedback = await sendMessage(responseJson['id'])// 这里也应该变成从服务器返回
         console.log('feedback:', feedback, 'type', typeof feedback);
         // const Regex = /，|,/
         const Regex = /[，,.。]+/; // 定义了中文逗号、英文逗号、中文句号、英文句号作为分隔符
