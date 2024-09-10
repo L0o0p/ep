@@ -7,6 +7,7 @@ import {
 } from "../store"
 import axios, { AxiosError } from "axios"
 import { useCallback } from "react"
+import { get_ollama_res } from "src/ollama";
 // import * as fs from 'fs'
 const url = 'https://dify.cyte.site:2097/v1/files/upload';// 替换成本地服务器url和api
 
@@ -36,47 +37,59 @@ export const SubmitButton = () => {
       // 读取文件，并且转换为Uint8Array格式
 
       const data = await window.fs.readFileSync(itemPath)
-      const formData = new FormData();
-      formData.append('file', new Blob([data], { type: 'image/png' }), 'file.png');
-      formData.append('user', 'user123');
 
-      try {
-        const config = {
-          headers: {
-            'Authorization': `Bearer ${user.Authorization}`, // 替换为服务器url，替换 {api_key} 为你的实际 API 密钥
-            'Content-Type': 'multipart/form-data'
-          }
-        };
-
-        // 执行 POST 请求
-        const responseJson = await axios.post(url, formData, config)
-          .then(response => {
-            console.log('文件上传成功:', response.data);
-            return response.data
-          })
-          .catch(error => {
-            console.error('上传文件时出错:', error);
-          });
-        // 保存文件信息
-        // setEditFile(responseJson)
-        const feedback = await sendMessage(responseJson['id'])// 这里也应该变成从服务器返回
-        console.log('feedback:', feedback, 'type', typeof feedback);
-        // const Regex = /，|,/
-        const Regex = /[，,.。]+/; // 定义了中文逗号、英文逗号、中文句号、英文句号作为分隔符
-        const useToTags = feedback.split(Regex)
-        console.log('useToTags:', useToTags, 'type', typeof useToTags);
-        for (const tag of useToTags) {
-          item.tags.push(tag)
-          console.log(item);
-        }
-
-        await item.save();
-        setFeedBack(feedback)
-        // await tagItems(editFile)
-        // alert('finished')
-      } catch (error) {
-        console.error('Upload failed:', error);
+      const res = await get_ollama_res(data)
+      const feedBack = res.message.content
+      const Regex = /[，,.。]+/; // 定义了中文逗号、英文逗号、中文句号、英文句号作为分隔符
+      const useToTags = feedBack.split(Regex)
+      for (const tag of useToTags) {
+        item.tags.push(tag)
+        console.log(item);
       }
+
+      await item.save();
+      setFeedBack(feedBack)
+
+      // try {
+      //   const formData = new FormData();
+      //   formData.append('file', new Blob([data], { type: 'image/png' }), 'file.png');
+      //   formData.append('user', 'user123');
+      //   const config = {
+      //     headers: {
+      //       'Authorization': `Bearer ${user.Authorization}`, // 替换为服务器url，替换 {api_key} 为你的实际 API 密钥
+      //       'Content-Type': 'multipart/form-data'
+      //     }
+      //   };
+
+      //   // 执行 POST 请求
+      //   const responseJson = await axios.post(url, formData, config)
+      //     .then(response => {
+      //       console.log('文件上传成功:', response.data);
+      //       return response.data
+      //     })
+      //     .catch(error => {
+      //       console.error('上传文件时出错:', error);
+      //     });
+      //   // 保存文件信息
+      //   // setEditFile(responseJson)
+      //   const feedback = await sendMessage(responseJson['id'])// 这里也应该变成从服务器返回
+      //   console.log('feedback:', feedback, 'type', typeof feedback);
+      //   // const Regex = /，|,/
+      //   const Regex = /[，,.。]+/; // 定义了中文逗号、英文逗号、中文句号、英文句号作为分隔符
+      //   const useToTags = feedback.split(Regex)
+      //   console.log('useToTags:', useToTags, 'type', typeof useToTags);
+      //   for (const tag of useToTags) {
+      //     item.tags.push(tag)
+      //     console.log(item);
+      //   }
+
+      //   await item.save();
+      //   setFeedBack(feedback)
+      //   // await tagItems(editFile)
+      //   // alert('finished')
+      // } catch (error) {
+      //   console.error('Upload failed:', error);
+      // }
     }
 
   }, [path, setFeedBack])
