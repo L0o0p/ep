@@ -3,15 +3,15 @@ import {
   // editFileAtom,
   feedBackAtom,
   inputValueAtom,
-  user
+  // user
 } from "../store"
-import axios, { AxiosError } from "axios"
+// import axios, { AxiosError } from "axios"
 import { useCallback } from "react"
-import { get_ollama_res } from "src/ollama";
+import { get_ollama_res } from "../ollamacli";
 // import * as fs from 'fs'
-const url = 'https://dify.cyte.site:2097/v1/files/upload';// 替换成本地服务器url和api
+// const url = 'https://dify.cyte.site:2097/v1/files/upload';// 替换成本地服务器url和api
 
-export const SubmitButton = () => {
+export const SubmitButton = (props: { premise: string }) => {
   const [path] = useAtom<string>(inputValueAtom)
   const [, setFeedBack] = useAtom(feedBackAtom)
   // const [, setEditFile] = useAtom<[]>(editFileAtom)
@@ -38,13 +38,28 @@ export const SubmitButton = () => {
 
       const data = await window.fs.readFileSync(itemPath)
 
-      const res = await get_ollama_res(data)
+      const res = await get_ollama_res(data, props.premise)
       const feedBack = res.message.content
-      const Regex = /[，,.。]+/; // 定义了中文逗号、英文逗号、中文句号、英文句号作为分隔符
+      const Regex = /[，,.。、"'”“‘’]+/;
       const useToTags = feedBack.split(Regex)
       for (const tag of useToTags) {
-        item.tags.push(tag)
-        console.log(item);
+        let t = tag.replace('"', '')
+        t = t.replace('“', '')
+        if (t.includes(':')) {
+          const k = t.split(':')
+          // if (k.length === 1) continue
+          t = k[k.length - 1]
+        }
+        if (t.includes('：')) {
+          const k = t.split('：')
+          // if (k.length === 1) continue
+          t = k[k.length - 1]
+        }
+        t = t.trim()
+        if (t.length) {
+          item.tags.push(tag)
+          console.log(item);
+        }
       }
 
       await item.save();
@@ -92,7 +107,7 @@ export const SubmitButton = () => {
       // }
     }
 
-  }, [path, setFeedBack])
+  }, [path, props.premise, setFeedBack])
 
   return (
     <button onClick={handleClick}>Submit</button>
@@ -131,53 +146,53 @@ const selectItem = async (path: string) => {
 }
 
 // 方法：最终发送图片到AI服务器
-async function sendMessage(editFile: string) {
-  const url = `${user.BASE_URL}/chat-messages`; // 替换为正确的 URL
-  const query = '你好，我想了解更多信息。'
-  // const imgURl = prompt ? prompt : "https://cloud.dify.ai/logo/logo-site.png"
-  const imgURl = editFile
-  const data = {
-    query,//"你好，我想了解更多信息。",
-    response_mode: "blocking",
-    user: "user123",
-    auto_generate_name: false,
-    inputs: {},
-    "files": [
-      {
-        "type": "image",
-        "transfer_method": "local_file",
-        "upload_file_id": imgURl
-      },
+// async function sendMessage(editFile: string) {
+//   const url = `${user.BASE_URL}/chat-messages`; // 替换为正确的 URL
+//   const query = '你好，我想了解更多信息。'
+//   // const imgURl = prompt ? prompt : "https://cloud.dify.ai/logo/logo-site.png"
+//   const imgURl = editFile
+//   const data = {
+//     query,//"你好，我想了解更多信息。",
+//     response_mode: "blocking",
+//     user: "user123",
+//     auto_generate_name: false,
+//     inputs: {},
+//     "files": [
+//       {
+//         "type": "image",
+//         "transfer_method": "local_file",
+//         "upload_file_id": imgURl
+//       },
 
-    ]
-  };
+//     ]
+//   };
 
-  try {
-    const response = await axios.post(
-      url,
-      data,
-      {
-        headers: { 'Authorization': `Bearer ${user.Authorization}` }
-      });
-    const feedBack = response.data.answer
-    console.log('Response:', feedBack);
-    return feedBack
+//   try {
+//     const response = await axios.post(
+//       url,
+//       data,
+//       {
+//         headers: { 'Authorization': `Bearer ${user.Authorization}` }
+//       });
+//     const feedBack = response.data.answer
+//     console.log('Response:', feedBack);
+//     return feedBack
 
-  } catch (error) {
-    const axiosError = error as AxiosError<{ message: string }>;
-    if (axiosError.response) {
-      console.error('Error Status:', axiosError.response.status);
-      console.error('Error Data:', axiosError.response.data);
-      return { feedBack: "Error: " + axiosError.response.data.message };  // 提供默认反馈
-    } else if (axiosError.request) {
-      console.error('No response received.');
-      return { feedBack: "No response received" };  // 提供默认反馈
-    } else {
-      console.error('Error Message:', axiosError.message);
-      return { feedBack: "Request setup error" };  // 提供默认反馈
-    }
-  }
-}
+//   } catch (error) {
+//     const axiosError = error as AxiosError<{ message: string }>;
+//     if (axiosError.response) {
+//       console.error('Error Status:', axiosError.response.status);
+//       console.error('Error Data:', axiosError.response.data);
+//       return { feedBack: "Error: " + axiosError.response.data.message };  // 提供默认反馈
+//     } else if (axiosError.request) {
+//       console.error('No response received.');
+//       return { feedBack: "No response received" };  // 提供默认反馈
+//     } else {
+//       console.error('Error Message:', axiosError.message);
+//       return { feedBack: "Request setup error" };  // 提供默认反馈
+//     }
+//   }
+// }
 
 
 
