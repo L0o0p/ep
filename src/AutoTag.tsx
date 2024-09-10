@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai'
 import { useEffect } from "react"
-import { PathInput } from './component/PathInput'
+// import { PathInput } from './component/PathInput'
 import { editFileAtom, feedBackAtom, taskStatusAtom } from '@store'
 import { SubmitButton } from './component/SubmitButton'
 
@@ -17,7 +17,7 @@ export const AutoTag = () => {
     return (
         <>
             {/*输入：输入需要打标的文件路径 input/dropDown */}
-            <PathInput />
+            {/* <PathInput /> */}
             {/*处理- 执行：点击开始打标  */}
             <SubmitButton />
             {/*处理- 状态：点击开始打标  */}

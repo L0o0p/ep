@@ -53,5 +53,7 @@ export const editFileAtom = atom<[]>([]);
 // 用户信息
 export const user = {
     BASE_URL: "https://dify.cyte.site:2097/v1",
-    Authorization: 'app-28d3eOAJhHyp98d5UedhfGiK'
+    // Authorization: 'app-28d3eOAJhHyp98d5UedhfGiK'
+    Authorization: 'app-NJes6FqpeapihGgdnrxAjC8n'
+
 }
