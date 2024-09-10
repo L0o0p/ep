@@ -9,9 +9,6 @@ export const premise = `针对我发给你的图片，给图片打标签:
 例："tag1","tag2","tag3"...`
 export const get_ollama_res = async (image: Uint8Array, query: string) => {
     return ollama.chat({
-        model: 'aiden_lu/minicpm-v2.6:Q4_K_M', keep_alive: '72000s', messages: [{ 'role': 'user', 'content': query, images: [image] }], stream: false, options: {
-            temperature: 0.3,
-            top_p: 0.6
-        }
+        model: 'aiden_lu/minicpm-v2.6:Q4_K_M', keep_alive: '72000s', messages: [{ 'role': 'user', 'content': query, images: [image] }], stream: false
     });
 };
